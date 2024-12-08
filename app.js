@@ -1,8 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./db");
-const logger = require("morgan");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import connectDB from "./db.js";
+import logger from "morgan";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -11,13 +13,13 @@ app.use(cors());
 
 connectDB();
 
-const authRouter = require("./routes/api/auth");
+import authRouter from "./routes/api/auth.js";
 app.use("/api/auth", authRouter);
 
-const usersRouter = require("./routes/api/user");
+import usersRouter from "./routes/api/user.js";
 app.use("/api/user", usersRouter);
 
-const transactionsRouter = require("./routes/api/transaction");
+import transactionsRouter from "./routes/api/transaction.js";
 app.use("/api/transaction", transactionsRouter);
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
@@ -40,4 +42,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = app;
+export default app;
