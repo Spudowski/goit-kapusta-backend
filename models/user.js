@@ -18,6 +18,22 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
+    newBalance: {
+      type: Number,
+      default: 0,
+    },
+    totalIncome: {
+      type: Number,
+      default: 0,
+    },
+    totalExpense: {
+      type: Number,
+      default: 0,
+    },
   },
   { versionKey: false, timestamps: true }
 );
