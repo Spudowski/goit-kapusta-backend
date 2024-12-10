@@ -72,10 +72,6 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-    // const { _id } = req.user
-    // await User.findByIdAndUpdate(_id, { token: null })
-    // res.status(201).json({ message: 'Logout successful' })
-
     try {
         const token = req.headers['authorization']?.split(' ')[1];
         const decoded = req.user;
