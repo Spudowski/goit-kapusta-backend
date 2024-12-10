@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bCrypt from "bcrypt";
+import bCrypt from "bcryptjs";
 
 const { Schema } = mongoose;
 
@@ -34,6 +34,11 @@ const userSchema = new Schema(
       type: Number,
       default: 0,
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin', 'manager'],
+      default: 'user',
+    }
   },
   { versionKey: false, timestamps: true }
 );

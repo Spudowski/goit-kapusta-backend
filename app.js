@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import connectDB from "./db.js";
+import bodyParser from "body-parser"
 import logger from "morgan";
 import dotenv from "dotenv";
 
@@ -10,8 +11,12 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json())
 
 connectDB();
+
+import authRoutes from "./routes/api/authRoutes.js"
+app.use('/api/auth', authRoutes) 
 
 import authRouter from "./routes/api/auth.js";
 app.use("/api/auth", authRouter);
