@@ -18,22 +18,22 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
-    newBalance: {
+    balance: {
       type: Number,
       default: 0,
     },
-    totalIncome: {
-      type: Number,
-      default: 0,
-    },
-    totalExpense: {
-      type: Number,
-      default: 0,
-    },
+    incomes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Income'
+      },
+    ],
+    expenses: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Expense'
+      },
+    ],
     role: {
       type: String,
       enum: ['user', 'admin', 'manager'],

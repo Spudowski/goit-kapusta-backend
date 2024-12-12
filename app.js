@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 connectDB();
 
 import authRoutes from "./routes/api/authRoutes.js"
-app.use('/api/auth', authRoutes) 
+app.use('/api/user', authRoutes) 
 
 import authRouter from "./routes/api/auth.js";
 app.use("/api/auth", authRouter);
