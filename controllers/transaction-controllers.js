@@ -38,9 +38,15 @@ export const getAllExpenses = async (req, res, next) => {
   }
 };
 
+//------------------ poniżej Anita
 export const deleteTransaction = async (req, res, next) => {
+  const { id } = req.params;
   try {
-    await removeTransaction(id);
+    const result = await removeTransaction(id);
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+    res.status(200).json({ message: "Transaction deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -48,23 +54,33 @@ export const deleteTransaction = async (req, res, next) => {
 
 export const getIncomeCategories = async (req, res, next) => {
   try {
-    const categoriesIncomes = await fetchCategories();
+    const categoriesIncomes = await fetchCategories("income");
     res.status(200).json(categoriesIncomes);
   } catch (error) {
     next(error);
   }
 };
 export const getExpenseCategories = async (req, res, next) => {
-  const categoriesExpenses = await fetchCategories();
-  res.status(200).json(categoriesExpenses);
   try {
+    const categoriesExpenses = await fetchCategories("expense");
+    res.status(200).json(categoriesExpenses);
   } catch (error) {
     next(error);
   }
 };
+
 export const getTransactionsPeriod = async (req, res, next) => {
+  const { startDate, endDate } = req.query;
   try {
-    const period = await fetchPeriod();
+    const period = await fetchPeriod(startDate, endDate);
+    if (!startDate || !endDate) {
+      return res
+        .status(400)
+        .json({ message: "Both startDate and endDate are required" });
+    }
+    if (isNaN(new Date(startDate)) || isNaN(new Date(endDate))) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
     res.status(200).json(period);
   } catch (error) {
     next(error);

@@ -10,18 +10,20 @@ import {
   getExpenseCategories,
   getTransactionsPeriod,
 } from "../../controllers/transaction-controllers.js";
+import { authenticateToken } from "../../middlewares/authToken.js";
 
 dotenv.config();
 
 const router = express.Router();
 
-router.post("/income", postIncome);
-router.get("/income", getAllIncomes);
-router.post("/expense", postExpense);
-router.get("/expense", getAllExpenses);
-router.delete("/", deleteTransaction);
-router.get("/income-categories", getIncomeCategories);
-router.get("/expense-categories", getExpenseCategories);
-router.get("/period-data", getTransactionsPeriod);
+router.post("/income", authenticateToken, postIncome);
+router.get("/income", authenticateToken, getAllIncomes);
+router.post("/expense", authenticateToken, postExpense);
+router.get("/expense", authenticateToken, getAllExpenses);
+//------------------ poniżej Anita
+router.delete("/:id", authenticateToken, deleteTransaction);
+router.get("/income-categories", authenticateToken, getIncomeCategories);
+router.get("/expense-categories", authenticateToken, getExpenseCategories);
+router.get("/period-data", authenticateToken, getTransactionsPeriod);
 
 export default router;
