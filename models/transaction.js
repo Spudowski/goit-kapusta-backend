@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const transactionSchema = new Schema({
   typeOfTransaction: {
-    type: String, // Określa, czy to 'income' czy 'expense'
+    type: String,
     enum: ["income", "expense"],
     required: true,
   },
@@ -25,7 +25,7 @@ const transactionSchema = new Schema({
     required: true,
   },
   owner: {
-    type: Schema.Types.ObjectId, // Odniesienie do użytkownika
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
