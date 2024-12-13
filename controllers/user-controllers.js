@@ -3,6 +3,7 @@ import Session from "../models/session.js";
 import Joi from "joi";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Transaction from "../models/transaction.js";
 
 const userValidationSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -89,17 +90,56 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-// tu Adrian wrzuć Balance
 export const updateBalance = async (req, res, next) => {
+  const { newBalance } = req.body;
+
+  if (typeof newBalance !== 'number' || newBalance < 0) {
+    return res.status(400).json({ error: 'Bad request (invalid request body) / No token provided' })
+  };
+
   try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { newBalance },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid user / Invalid session' });
+    }
+
+    res.status(200).json({ message: 'Successful operation', newBalance: user.newBalance })
   } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error due to balance update' })
     next(error);
   }
 };
 
 export const getAllUserInfo = async (req, res, next) => {
   try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid user / Invalid session' });
+    }
+
+    const transactions = await Transaction.find({ owner: req.user.id });
+
+    res.status(200).json({
+      email: user.email,
+      balance: user.newBalance,
+      transactions: transactions.map((transaction) => ({
+        description: transaction.description,
+        category: transaction.category,
+        amount: transaction.amount,
+        date: transaction.date,
+        _id: transaction._id,
+      })),
+    })
   } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error due to balance update' })
     next(error);
   }
 };

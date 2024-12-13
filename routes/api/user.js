@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { authenticateToken } from "../../middlewares/authToken.js";
 import {
   getAllUserInfo,
   updateBalance,
@@ -9,7 +10,7 @@ dotenv.config();
 
 const router = express.Router();
 
-router.patch("/balance", updateBalance); //tu Adrian Twoja funkcja Balance
-router.get("/", getAllUserInfo);
+router.patch("/balance", authenticateToken, updateBalance);
+router.get("/", authenticateToken, getAllUserInfo);
 
 export default router;
