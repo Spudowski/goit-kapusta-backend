@@ -1,6 +1,5 @@
 import Transaction from "../models/transaction.js";
 
-// rozróżnić incomes i expenses? czy wykorzystać jedną funkcję
 export const fetchIncomes = () => {
   return Transaction.getAll();
 };
@@ -8,15 +7,17 @@ export const fetchExpenses = () => {
   return Transaction.getAll();
 };
 
+//------------------ poniżej Anita
 export const removeTransaction = (id) => Transaction.deleteOne({ _id: id });
 
-// rozróżnić incomes i expenses? czy wykorzystać jedną funkcję
-export const fetchCategories = () => {
-  return;
-  // Transaction.getAll();
+export const fetchCategories = (typeOfTransaction) => {
+  return Transaction.distinct("category", {
+    typeOfTransaction, // filter - income lub expense
+  });
 };
 
-export const fetchPeriod = () => {
-  return;
-  // Transaction.getAll();
+export const fetchPeriod = (startDate, endDate) => {
+  return Transaction.find({
+    date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+  });
 };
