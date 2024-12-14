@@ -1,11 +1,14 @@
 import Transaction from "../models/transaction.js";
 import User from "../models/user.js"
+import { createMonthStats } from "./transactionsHelpers.js";
 
 
 export const addTransaction = async (req, res, next) => {
 
+
+    console.log(req.user)
     const { description, amount, date, category, typeOfTransaction} = req.body;
-    const owner = req.user._id;
+    const owner = req.user.id;
     
     try {
         const user = await User.findById(owner);
@@ -53,5 +56,38 @@ export const addTransaction = async (req, res, next) => {
         }
     next(error)
 }
+}
+
+export const getAllIncomess = async(req, res, next) => {
+  try {
+      const incomes = await Transaction.find({
+          "typeOfTransaction": "income",
+          "owner": req.user.id
+      });
+      const monthStats = createMonthStats(incomes);
+      res.status(200).json({
+          "incomes": incomes,
+          "monthStats": monthStats
+      });
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAllExpensess = async(req, res, next) => {
+try {
+    const expenses = await Transaction.find({ 
+          "typeOfTransaction": "expense",
+          "owner": req.user.id
+    });
+    const monthStats = createMonthStats(expenses);
+    
+      res.status(200).json({
+          "expense": expenses,
+          "monthStats": monthStats
+      });
+    } catch (error) {
+        next(error)
+    }
 }
 
