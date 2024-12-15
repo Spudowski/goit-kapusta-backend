@@ -6,8 +6,7 @@ dotenv.config();
 
 const router = express.Router();
 
-// router.post("/register", () => {});
-router.post('/signup', registerUser)
+router.post('/register', registerUser)
 router.post('/login', loginUser)
 router.post('/logout', authenticateToken, logoutUser)
 

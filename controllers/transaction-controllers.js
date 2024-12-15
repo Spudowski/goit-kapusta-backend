@@ -83,10 +83,9 @@ try {
           "owner": req.user.id
     });
     const monthStats = createMonthStats(expenses);
-    
-      res.status(200).json({
-          "expense": expenses,
-          "monthStats": monthStats
+    res.status(200).json({
+        "expense": expenses,
+        "monthStats": monthStats
       });
     } catch (error) {
         next(error)
