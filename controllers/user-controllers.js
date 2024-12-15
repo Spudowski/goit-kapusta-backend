@@ -56,7 +56,7 @@ export const loginUser = async (req, res) => {
     return res.status(401).json({ message: "Email or password is incorrect" });
   }
 
-  const token = jwt.sign(
+  const accessToken = jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     process.env.JWTSEC,
     {
@@ -64,11 +64,18 @@ export const loginUser = async (req, res) => {
     }
   );
 
+  const refreshToken = jwt.sign(
+    { id: user._id, email: user.email, role: user.role },
+    process.env.JWTSEC,
+    { expiresIn: '7d' }
+  )
+
   const transactions = await Transaction.find({ owner: user._id })
     .select(' description category amount date _id typeOfTransaction')
     .sort({ date: -1 });
   
-  user.token = token;
+  user.token = accessToken;
+  user.refreshToken = refreshToken;
   await user.save();
 
   const userData = {
@@ -85,7 +92,8 @@ export const loginUser = async (req, res) => {
   }
 
   res.status(200).json({
-    token,
+    accessToken,
+    refreshToken,
     userData,
   });
 };
@@ -104,7 +112,6 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-// tu Adrian wrzuć Balance
 export const updateBalance = async (req, res, next) => {
   const { newBalance } = req.body;
 

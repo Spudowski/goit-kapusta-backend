@@ -19,7 +19,6 @@ router.post("/income", authenticateToken, addTransaction);
 router.get("/income", authenticateToken, getAllIncomess);
 router.post("/expense", authenticateToken, addTransaction);
 router.get("/expense", authenticateToken, getAllExpensess);
-//------------------ poniżej Anita
 router.delete("/:id", authenticateToken, deleteTransaction);
 router.get("/income-categories", authenticateToken, getIncomeCategories);
 router.get("/expense-categories", authenticateToken, getExpenseCategories);

@@ -92,7 +92,6 @@ try {
     }
 }
 
-//------------------ poniżej Anita
 export const deleteTransaction = async (req, res, next) => {
   const { id } = req.params;
   try {
