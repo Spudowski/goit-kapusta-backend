@@ -1,12 +1,5 @@
 import Transaction from "../models/transaction.js";
 
-export const fetchIncomes = () => {
-  return Transaction.getAll();
-};
-export const fetchExpenses = () => {
-  return Transaction.getAll();
-};
-
 //------------------ poniżej Anita
 export const removeTransaction = (id) => Transaction.deleteOne({ _id: id });
 

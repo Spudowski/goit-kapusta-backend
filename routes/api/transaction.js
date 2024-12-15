@@ -1,14 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
 import {
-  postIncome,
-  getAllIncomes,
-  postExpense,
-  getAllExpenses,
   deleteTransaction,
   getIncomeCategories,
   getExpenseCategories,
   getTransactionsPeriod,
+  addTransaction,
+  getAllIncomess,
+  getAllExpensess,
 } from "../../controllers/transaction-controllers.js";
 import { authenticateToken } from "../../middlewares/authToken.js";
 
@@ -16,10 +15,10 @@ dotenv.config();
 
 const router = express.Router();
 
-router.post("/income", authenticateToken, postIncome);
-router.get("/income", authenticateToken, getAllIncomes);
-router.post("/expense", authenticateToken, postExpense);
-router.get("/expense", authenticateToken, getAllExpenses);
+router.post("/income", authenticateToken, addTransaction);
+router.get("/income", authenticateToken, getAllIncomess);
+router.post("/expense", authenticateToken, addTransaction);
+router.get("/expense", authenticateToken, getAllExpensess);
 //------------------ poniżej Anita
 router.delete("/:id", authenticateToken, deleteTransaction);
 router.get("/income-categories", authenticateToken, getIncomeCategories);
