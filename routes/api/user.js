@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { authenticateToken } from "../../middlewares/authToken.js";
 import {
   getAllUserInfo,
   updateBalance,
