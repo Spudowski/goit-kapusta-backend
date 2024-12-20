@@ -3,6 +3,10 @@ import bCrypt from "bcryptjs";
 
 const { Schema } = mongoose;
 
+const generateRandomHexColor = () => {
+  return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+}
+
 const userSchema = new Schema(
   {
     password: {
@@ -38,6 +42,14 @@ const userSchema = new Schema(
       type: String,
       enum: ['user', 'admin', 'manager'],
       default: 'user',
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    avatarColor: {
+      type: String,
+      default: generateRandomHexColor
     }
   },
   { versionKey: false, timestamps: true }

@@ -82,6 +82,8 @@ export const loginUser = async (req, res) => {
     email: user.email,
     balance: user.newBalance || 0,
     id: user._id,
+    verify: user.isVerified,
+    color: user.avatarColor,
     transactions: transactions.map((transaction) => ({
       description: transaction.description,
       category: transaction.category,
