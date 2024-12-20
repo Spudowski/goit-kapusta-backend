@@ -11,11 +11,16 @@ const userValidationSchema = Joi.object({
 });
 
 export const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, email, password, } = req.body;
 
   const { error } = userValidationSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ message: error.message });
+  }
+
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    return res.status(409).json({ message: "Username is already taken" });
   }
 
   const existingUser = await User.findOne({ email });
@@ -26,12 +31,14 @@ export const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
+    username,
     email,
     password: hashedPassword,
   });
 
   res.status(201).json({
     user: {
+      username: newUser.username,
       email: newUser.email,
       id: newUser._id,
     },
@@ -79,6 +86,7 @@ export const loginUser = async (req, res) => {
   await user.save();
 
   const userData = {
+    username: user.username,
     email: user.email,
     balance: user.newBalance || 0,
     id: user._id,
