@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import Transaction from "../models/transaction.js";
 
 const userValidationSchema = Joi.object({
+  username: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
