@@ -123,16 +123,28 @@ export const getExpenseCategories = async (req, res, next) => {
 };
 
 export const getTransactionsPeriod = async (req, res, next) => {
-  const { startDate, endDate } = req.query;
+  const { monthIndex, year } = req.query;
+  if (!monthIndex || !year) {
+    return res.status(400).json({ message: "Month and year are required" });
+  }
+  const currentDate = new Date();
+  const selectedMonth = parseInt(monthIndex, 10) || currentDate.getMonth();
+  const selectedYear = parseInt(year, 10) || currentDate.getFullYear();
+  if (
+    isNaN(selectedMonth) ||
+    isNaN(selectedYear) ||
+    selectedMonth < 0 ||
+    selectedMonth > 11
+  ) {
+    return res.status(400).json({ message: "Invalid month or year" });
+  }
+  const startOfMonth = new Date(selectedYear, selectedMonth, 1); // Pierwszy dzień miesiąca
+  const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0); // Ostatni dzień miesiąca
+  endOfMonth.setHours(23, 59, 59, 999); // Ustaw godzinę na koniec dnia
   try {
-    const period = await fetchPeriod(startDate, endDate);
-    if (!startDate || !endDate) {
-      return res
-        .status(400)
-        .json({ message: "Both startDate and endDate are required" });
-    }
-    if (isNaN(new Date(startDate)) || isNaN(new Date(endDate))) {
-      return res.status(400).json({ message: "Invalid date format" });
+    const period = await fetchPeriod(startOfMonth, endOfMonth);
+    if (!period || period.length === 0) {
+      return res.status(404).json({ message: "Transactions not found" });
     }
     res.status(200).json(period);
   } catch (error) {

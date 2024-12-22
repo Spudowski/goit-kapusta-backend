@@ -9,8 +9,12 @@ export const fetchCategories = (typeOfTransaction) => {
   });
 };
 
-export const fetchPeriod = (startDate, endDate) => {
+//uwaga miesiące mają index od 0 do 11
+export const fetchPeriod = (startOfMonth, endOfMonth) => {
   return Transaction.find({
-    date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+    date: {
+      $gte: startOfMonth,
+      $lte: endOfMonth,
+    },
   });
 };
