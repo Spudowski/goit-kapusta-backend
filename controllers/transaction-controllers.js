@@ -144,10 +144,11 @@ export const getTransactionsPeriod = async (req, res, next) => {
   try {
     const period = await fetchPeriod(startOfMonth, endOfMonth);
     if (!period || period.length === 0) {
-      return res.status(404).json({ message: "Transactions not found" });
+      return res.status(200).json([]);
     }
     res.status(200).json(period);
   } catch (error) {
+    console.error("Error fetching transactions:", error);
     next(error);
   }
 };
