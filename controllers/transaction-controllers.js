@@ -1,11 +1,32 @@
 import {
   removeTransaction,
-  fetchCategories,
   fetchPeriod,
 } from "../service/transaction-service.js";
 import User from "../models/user.js";
 import Transaction from "../models/transaction.js";
 import { createMonthStats } from "./transactionsHelpers.js";
+
+const incomeCategories = [
+  "Salary",
+  "Investments",
+  "Business",
+  "Gifts",
+  "Other",
+];
+
+const expenseCategories = [
+  "Products",
+  "Alcohol",
+  "Entertainment",
+  "Health",
+  "Transport",
+  "Everything for the home",
+  "Technique",
+  "Utilities and communications",
+  "Sports and Hobbies",
+  "Education",
+  "Other"
+];
 
 export const addTransaction = async (req, res, next) => {
   const { description, amount, date, category, typeOfTransaction } = req.body;
@@ -41,6 +62,7 @@ export const addTransaction = async (req, res, next) => {
     return res.status(200).json({
       newBalance: user.newBalance,
       transaction: {
+        type: newTransaction.typeOfTransaction,
         description: newTransaction.description,
         amount: newTransaction.amount,
         date: newTransaction.date,
@@ -103,16 +125,15 @@ export const deleteTransaction = async (req, res, next) => {
 
 export const getIncomeCategories = async (req, res, next) => {
   try {
-    const categoriesIncomes = await fetchCategories("income");
-    res.status(200).json(categoriesIncomes);
+    res.status(200).json(incomeCategories);
   } catch (error) {
     next(error);
   }
 };
+
 export const getExpenseCategories = async (req, res, next) => {
   try {
-    const categoriesExpenses = await fetchCategories("expense");
-    res.status(200).json(categoriesExpenses);
+    res.status(200).json(expenseCategories);
   } catch (error) {
     next(error);
   }

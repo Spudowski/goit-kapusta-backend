@@ -174,11 +174,12 @@ export const getAllUserInfo = async (req, res, next) => {
     res.status(200).json({
       email: user.email,
       balance: user.newBalance,
-      transactions: transactions.map((transaction) => ({
+      transaction: transactions.map((transaction) => ({
+        type: transaction.typeOfTransaction,
         description: transaction.description,
-        category: transaction.category,
         amount: transaction.amount,
         date: transaction.date,
+        category: transaction.category,
         _id: transaction._id,
       })),
     });
