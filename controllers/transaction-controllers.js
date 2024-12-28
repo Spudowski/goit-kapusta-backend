@@ -8,10 +8,7 @@ import { createMonthStats } from "./transactionsHelpers.js";
 
 const incomeCategories = [
   "Salary",
-  "Investments",
-  "Business",
-  "Gifts",
-  "Other",
+  "Add. Income",
 ];
 
 const expenseCategories = [
@@ -20,10 +17,10 @@ const expenseCategories = [
   "Entertainment",
   "Health",
   "Transport",
-  "Everything for the home",
+  "Housing",
   "Technique",
-  "Utilities and communications",
-  "Sports and Hobbies",
+  "Communal, communication",
+  "Sports, hobbies",
   "Education",
   "Other"
 ];
