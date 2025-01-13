@@ -1,28 +1,25 @@
 import {
   removeTransaction,
   fetchPeriod,
-} from "../service/transaction-service.js";
-import User from "../models/user.js";
-import Transaction from "../models/transaction.js";
-import { createMonthStats } from "./transactionsHelpers.js";
+} from '../service/transaction-service.js';
+import User from '../models/user.js';
+import Transaction from '../models/transaction.js';
+import { createMonthStats } from './transactionsHelpers.js';
 
-const incomeCategories = [
-  "Salary",
-  "Add. Income",
-];
+const incomeCategories = ['Salary', 'Add. Income'];
 
 const expenseCategories = [
-  "Products",
-  "Alcohol",
-  "Entertainment",
-  "Health",
-  "Transport",
-  "Housing",
-  "Technique",
-  "Communal, communication",
-  "Sports, hobbies",
-  "Education",
-  "Other"
+  'Products',
+  'Alcohol',
+  'Entertainment',
+  'Health',
+  'Transport',
+  'Housing',
+  'Technique',
+  'Communal, communication',
+  'Sports, hobbies',
+  'Education',
+  'Other',
 ];
 
 export const addTransaction = async (req, res, next) => {
@@ -33,7 +30,7 @@ export const addTransaction = async (req, res, next) => {
     const user = await User.findById(owner);
 
     if (!user) {
-      return res.status(404).json({ error: "Invalid user or session" });
+      return res.status(404).json({ error: 'Invalid user or session' });
     }
     const newTransaction = new Transaction({
       typeOfTransaction,
@@ -46,9 +43,9 @@ export const addTransaction = async (req, res, next) => {
 
     await newTransaction.save();
 
-    if (typeOfTransaction === "income") {
+    if (typeOfTransaction === 'income') {
       user.totalIncome += amount;
-    } else if (typeOfTransaction === "expense") {
+    } else if (typeOfTransaction === 'expense') {
       user.totalExpense += amount;
     }
 
@@ -68,7 +65,7 @@ export const addTransaction = async (req, res, next) => {
       },
     });
   } catch (error) {
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       return res.status(400).json({ error: error.message });
     }
     next(error);
@@ -78,7 +75,7 @@ export const addTransaction = async (req, res, next) => {
 export const getAllIncomess = async (req, res, next) => {
   try {
     const incomes = await Transaction.find({
-      typeOfTransaction: "income",
+      typeOfTransaction: 'income',
       owner: req.user.id,
     });
     const monthStats = createMonthStats(incomes);
@@ -94,7 +91,7 @@ export const getAllIncomess = async (req, res, next) => {
 export const getAllExpensess = async (req, res, next) => {
   try {
     const expenses = await Transaction.find({
-      typeOfTransaction: "expense",
+      typeOfTransaction: 'expense',
       owner: req.user.id,
     });
     const monthStats = createMonthStats(expenses);
@@ -112,10 +109,12 @@ export const deleteTransaction = async (req, res, next) => {
   try {
     const result = await removeTransaction(id);
     if (result.deletedCount === 0) {
-      return res.status(404).json({ message: "Transaction not found" });
+      throw new Error('Transaction not found!');
+      // return res.status(404).json({ message: 'Transaction not found' });
     }
-    res.status(200).json({ message: "Transaction deleted successfully" });
+    res.status(200).json({ message: 'Transaction deleted successfully' });
   } catch (error) {
+    error.name = 'IncorrectCredentials'; //status 401 a nie 404
     next(error);
   }
 };
@@ -139,7 +138,7 @@ export const getExpenseCategories = async (req, res, next) => {
 export const getTransactionsPeriod = async (req, res, next) => {
   const { monthIndex, year } = req.query;
   if (!monthIndex || !year) {
-    return res.status(400).json({ message: "Month and year are required" });
+    return res.status(400).json({ message: 'Month and year are required' });
   }
   const currentDate = new Date();
   const selectedMonth = parseInt(monthIndex, 10) || currentDate.getMonth();
@@ -150,7 +149,7 @@ export const getTransactionsPeriod = async (req, res, next) => {
     selectedMonth < 0 ||
     selectedMonth > 11
   ) {
-    return res.status(400).json({ message: "Invalid month or year" });
+    return res.status(400).json({ message: 'Invalid month or year' });
   }
   const startOfMonth = new Date(selectedYear, selectedMonth, 1); // Pierwszy dzień miesiąca
   const endOfMonth = new Date(selectedYear, selectedMonth + 1, 0); // Ostatni dzień miesiąca
@@ -162,7 +161,7 @@ export const getTransactionsPeriod = async (req, res, next) => {
     }
     res.status(200).json(period);
   } catch (error) {
-    console.error("Error fetching transactions:", error);
+    console.error('Error fetching transactions:', error);
     next(error);
   }
 };

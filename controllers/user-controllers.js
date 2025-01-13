@@ -16,22 +16,21 @@ const userLoginValidationSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   const { username, email, password } = req.body;
-
+  // error w walidacji 400
   const { error } = userValidationSchema.validate(req.body);
   if (error) {
-    return res.status(400).json({ message: error.message });
+    error.name === `ValidationError`; // ?
+    return next(error);
   }
-
-  const existingUsername = await User.findOne({ username });
-  if (existingUsername) {
-    return res.status(409).json({ message: 'Username is already taken' });
-  }
-
-  const existingUser = await User.findOne({ email });
+  // error conflict 409
+  const existingUser = await User.findOne({ username } || { email });
   if (existingUser) {
-    return res.status(409).json({ message: 'Email in use' });
+    throw new Error('Incorrect user credentials!');
+
+    error.name === `EmailAlreadyTaken`; // ?
+    return next(error);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -56,7 +55,8 @@ export const loginUser = async (req, res) => {
 
   const { error } = userLoginValidationSchema.validate(req.body);
   if (error) {
-    return res.status(400).json({ message: error.message });
+    error.name === `ValidationError`;
+    return next(error);
   }
 
   const user = await User.findOne({ email });
@@ -118,14 +118,22 @@ export const loginUser = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     const token = req.headers['authorization']?.split(' ')[1];
-    const decoded = req.user;
+    // const decoded = req.user;
+    const decoded = jwt.decode(token);
 
+    if (!token) {
+      error.name === 'Va';
+      return res.status(400).json({ error: 'No token provided' });
+    }
+    if (!decoded) {
+      return res.status(400).json({ error: 'Invalid token' });
+    }
     const expiresAt = new Date(decoded.exp * 1000);
-
     await Session.create({ token, expiresAt });
     res.status(200).json({ message: 'Logout successfuly' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error while logging out' });
+    console.error('Error during logout:', error);
+    res.status(500).json({ error: 'Server error during logout' });
   }
 };
 
@@ -133,11 +141,9 @@ export const updateBalance = async (req, res, next) => {
   const { newBalance } = req.body;
 
   if (typeof newBalance !== 'number' || newBalance < 0) {
-    return res
-      .status(400)
-      .json({
-        error: 'Bad request (invalid request body) / No token provided',
-      });
+    return res.status(400).json({
+      error: 'Bad request (invalid request body) / No token provided',
+    });
   }
 
   try {

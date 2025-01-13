@@ -1,9 +1,9 @@
-import express from "express";
-import cors from "cors";
-import connectDB from "./db.js";
-import bodyParser from "body-parser";
-import logger from "morgan";
-import dotenv from "dotenv";
+import express from 'express';
+import cors from 'cors';
+import connectDB from './db.js';
+import bodyParser from 'body-parser';
+import logger from 'morgan';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -15,19 +15,20 @@ app.use(bodyParser.json());
 
 connectDB();
 
-import authRoutes from "./routes/api/authRoutes.js";
-app.use("/api/auth", authRoutes);
+// Not in use:
+// import authRoutes from './routes/api/authRoutes.js';
+// app.use('/api/auth', authRoutes);
 
-import authRouter from "./routes/api/auth.js";
-app.use("/api/auth", authRouter);
+import authRouter from './routes/api/auth.js';
+app.use('/api/auth', authRouter);
 
-import usersRouter from "./routes/api/user.js";
-app.use("/api/user", usersRouter);
+import usersRouter from './routes/api/user.js';
+app.use('/api/user', usersRouter);
 
-import transactionsRouter from "./routes/api/transaction.js";
-app.use("/api/transaction", transactionsRouter);
+import transactionsRouter from './routes/api/transaction.js';
+app.use('/api/transaction', transactionsRouter);
 
-const formatsLogger = app.get("env") === "development" ? "dev" : "short";
+const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 app.use(logger(formatsLogger));
 
 app.use((req, res) => {
@@ -36,14 +37,29 @@ app.use((req, res) => {
   });
 });
 
-app.use((err, req, res, next) => {
-  if (err.name === "ValidationError") {
+app.use((error, req, res, next) => {
+  if (error.name === 'ValidationError') {
+    console.error('Validation error:', error.message);
     return res.status(400).json({
-      message: err.message,
+      message: error.message || `Validation failed. Invalid input data.`,
+    });
+  }
+  if (error.name === 'IncorrectCredentials') {
+    console.error('Authentication error:', error.message);
+    return res.status(401).json({
+      message:
+        error.message ||
+        `Unauthorized. The provided credentials are incorrect.`,
+    });
+  }
+  if (error.name === 'EmailAlreadyTaken') {
+    console.error('ConflictEmail:', error.message);
+    return res.status(409).json({
+      message: error.message || `This email address is already in use.`,
     });
   }
   res.status(500).json({
-    message: err.message || `Internal Server Error. Something broke!`,
+    message: error.message || `Internal Server Error. Something broke!`,
   });
 });
 
